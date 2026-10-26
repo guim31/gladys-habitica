@@ -1,41 +1,44 @@
 // -----------------------------------------------------------------------------
-// Scene actions (SDK v0.14+, Gladys 5.1+).
+// Scene action handlers (manifest `scene_actions`, Gladys 5.1+). The fields
+// are strings, so a scene variable fits too (`{{triggerEvent.data.task_id}}`).
 //
-// A scene action is an OPERATION a scene author places in a scene, with
-// parameters and a result: "identify this device", "take a snapshot", "clean
-// these rooms". Each one is declared in the manifest `scene_actions` field
-// (key, label, `fields` in the config_schema grammar, scalar `outputs`) and
-// handled here, keyed by that same `key`; index.js registers every entry with
-// `gladys.onSceneAction(key, ...)`.
-//
-// Scene TRIGGERS are the other direction ("this happened"): they are fired by
-// the device that observes the event, see src/devices/motionSensor.js.
-//
-// The rules that matter:
-//   - `fields` arrive RESOLVED: scene variables substituted, defaults applied,
-//     validated by the core; a `"source": "devices"` field is the chosen
-//     device external_id;
-//   - resolve an object of the declared `outputs` (scalars only), readable by
-//     the following actions of the scene, or `undefined` for none. Keys not
-//     declared in the manifest are dropped by the core;
-//   - throwing fails THIS action only: the scene logs it and continues. A
-//     scene action is never a condition: return an output and let the scene
-//     author gate on it;
-//   - never fire a scene event as a consequence of a received action: a scene
-//     bound to that event would loop through the integration.
+//   - `score_task`: check a habit (+ or −), a daily or a to-do by its title
+//     (an NFC tag on the water bottle, a voice command, a sensor);
+//   - `create_todo`: add a to-do ("buy bread" from a button);
+//   - `start_day`: start the new Habitica day (its "cron"), e.g. at wake-up;
+//   - `read_status`: the dailies left, overdue to-dos and health as a
+//     sentence, for a message or a voice announcement.
 // -----------------------------------------------------------------------------
 
-import { createLogger } from '@gladysassistant/integration-sdk';
-import { signalDevice } from './devices/index.js';
+export const DIRECTIONS = ['up', 'down'];
 
-const logger = createLogger({ name: 'scenes' });
+const round = (value) => (Number.isFinite(value) ? Math.floor(value) : 0);
 
 export const SCENE_ACTIONS = {
-  // The ack is awaited under the action's `timeout_seconds` (15 s in the
-  // manifest), counted from the moment the scene reaches the action.
-  async identify_device(gladys, { fields, config }) {
-    logger.info(`Scene action identify_device <- ${fields.device}`);
-    const signalled = await signalDevice(gladys, fields.device, config);
-    return { signalled };
+  async score_task(hub, { fields = {} }) {
+    // A select without a default arrives empty (Gladys#3155): "up".
+    const direction = DIRECTIONS.includes(fields.direction) ? fields.direction : 'up';
+    const { task, stats } = await hub.score(fields.task, { direction });
+    return {
+      task: task.title,
+      task_type: task.type,
+      health: Math.max(0, Math.ceil(Number(stats.hp) || 0)),
+      level: round(stats.lvl),
+      gold: round(stats.gp),
+    };
+  },
+
+  async create_todo(hub, { fields = {} }) {
+    const { id, title } = await hub.createTodo(fields.title);
+    return { task: title, task_id: id };
+  },
+
+  async start_day(hub) {
+    await hub.startDay();
+    return {};
+  },
+
+  async read_status(hub) {
+    return hub.today();
   },
 };

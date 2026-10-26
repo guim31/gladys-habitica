@@ -16,8 +16,8 @@ its only runtime dependency. It started from the official JavaScript template.
 ```bash
 npm install
 npm test                                  # node --test, the built-in runner
-node --test test/devices.test.js          # one file
-node --test --test-name-pattern "plug"    # tests whose name matches
+node --test test/hub.test.js              # one file
+node --test --test-name-pattern "widget"  # tests whose name matches
 npm run lint                              # ESLint
 npm run format:check                      # Prettier, as the CI runs it
 npm run format                            # Prettier, fix in place
@@ -32,15 +32,21 @@ pushing.
 
 ```
 index.js                          SDK wiring only: handlers registered before connect()
-src/devices/index.js              registry of the device blueprints + dispatch helpers
-src/devices/<type>.js             one device type per file (buildDevice, onPoll, onSetValue...)
+src/app.js                        registers every SDK handler on the hub (shared with the tests)
+src/hub.js                        reading timer, states, scene events, commands (score, cron…)
+src/devices.js                    the "Habitica <name>" device and its six features
+src/habitica/client.js            Habitica API v3 client (errors sorted by kind)
+src/habitica/http.js              the one function that talks to the network (node:http/https)
+src/habitica/model.js             parsing, Habitica day (Custom Day Start), counters, task search
 src/scenes.js                     scene action handlers (manifest `scene_actions`)
 src/widgets.js                    dashboard widget handlers (manifest `widgets`)
+src/texts.js                      every text sent outside the widget, in four languages
+src/store.js                      /data/habitica-state.json (last reading, level, health…)
 src/config.js                     DEFAULT_CONFIG (mirrors the manifest defaults) + normalization
-src/weather.js                    example driver (Open-Meteo)
 gladys-assistant-integration.json manifest: name, config_schema, actions, image...
-docs/en.md, docs/fr.md            user documentation, re-hosted by Gladys (mandatory)
-test/                             node --test, against the SDK's fake Gladys (integration-sdk/testing)
+docs/{en,fr,de,es}.md             user documentation, re-hosted by Gladys (en and fr mandatory)
+test/                             node --test, against the SDK's fake Gladys and a fake Habitica
+test/fixtures/habitica/           real answers of a self-hosted Habitica 5.51.0
 .github/scripts/release.mjs       release helpers (manifest bump, changelog), tested in test/
 ```
 
@@ -70,8 +76,10 @@ test/                             node --test, against the SDK's fake Gladys (in
   `type: "provider"`: 5.1.0). `test/manifest.test.js` ties the manifest to the
   code (defaults, action, scene and widget handlers): change both sides
   together.
-- **User-facing text** is bilingual (English and French): action messages,
-  manifest texts, and `docs/en.md` / `docs/fr.md`, kept in sync.
+- **User-facing text** is in four languages (English, French, German with
+  "du", Spanish with "usted"): action messages, widget texts, manifest texts,
+  feature names, and `docs/{en,fr,de,es}.md`, kept in sync
+  (`test/i18n.test.js`).
 - **Style.** Prettier formats, ESLint catches mistakes. Comments explain why,
   in English. Tests never touch the network.
 
@@ -233,3 +241,30 @@ long, et sur un « Sie »/« Ihr… » de politesse en allemand. Le store exige 
 - Docs `en`, `fr`, `de`, `es` avec les mêmes sections.
 - Chauffe, ouverture, sécurité : ne rien rendre pilotable « comme un thermostat » ou par un assistant
   vocal quand une erreur serait dangereuse (leçon d'OctoPrint).
+
+## Habitica (API v3, vérifié sur un vrai serveur auto-hébergé, 26/10/2026)
+
+- Instance de test : image `awinterstein/habitica-server` (Habitica 5.51.0) + `mongo:6.0` lancé en
+  `--replSet rs` et `rs.initiate()` (sans jeu de réplicas, le serveur refuse les transactions),
+  `NODE_DB_URI=mongodb://<mongo>:27017/habitica?replicaSet=rs`. Compte créé par
+  `POST /api/v3/user/auth/local/register` (username, email, password, confirmPassword) : la réponse
+  donne `id` et `apiToken`. Pas de limite de requêtes sans Redis (`RATE_LIMITER_ENABLED`).
+- **La lecture ne lance jamais le « cron »** (fin de journée : quotidiennes décochées, dégâts) : les
+  applications appellent `POST /cron` à l'ouverture. Avant, les quotidiennes gardent les coches de la
+  veille : `needsCron` se déduit de `lastCron` < début de la journée Habitica, et toutes les
+  quotidiennes du jour comptent comme restantes. Cocher une quotidienne avant le cron la compterait
+  pour la veille : l'action de scène lance d'abord le cron, le widget propose « Commencer ma journée ».
+- `GET /tasks/user?dueDate=<ISO>` calcule `isDue` pour cet instant (non persisté). Une heure
+  00:00:00.000 est lue comme « une date seule » et décalée au début de journée : `dueDateParam`
+  ajoute une seconde.
+- Cocher une quotidienne ou une tâche déjà cochée répond **401 `NotAuthorized`** (« session
+  outdated ») : ce n'est pas un problème d'identifiants (ceux-là donnent 401 `invalid_credentials`).
+  `src/habitica/client.js` les distingue.
+- Avec `userFields`, ni `needsCron` ni les stats calculées (`maxHealth`, `toNextLevel`) ; sans, la
+  réponse contient tout le compte (inventaire, messagerie), des centaines de Ko pour un vieux compte.
+- `GET /tasks/user` sans `type` exclut les tâches à faire terminées. Une date de tâche à faire posée
+  par l'API est à minuit UTC, par les applications à minuit local (`dueDate()` gère les deux).
+- habitica.com : 30 requêtes par minute (en-têtes `X-RateLimit-*`, 429 avec `Retry-After`) et un
+  en-tête `x-client` demandé à tout outil tiers. Lecture toutes les 5 min au plus souvent.
+- Le début de journée personnalisé (`preferences.dayStart`) est appliqué dans le fuseau de Gladys,
+  heure locale juste même les jours de changement d'heure (`habiticaDay`, test du 25/10/2026).

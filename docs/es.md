@@ -1,0 +1,159 @@
+# Habitica
+
+Lleve su personaje de [Habitica](https://habitica.com) a Gladys: salud,
+nivel, experiencia, oro, las diarias pendientes de hoy y los pendientes
+atrasados. Una escena le recuerda por la noche las diarias aún sin marcar,
+celebra un nivel ganado o avisa cuando la salud baja; una etiqueta NFC en la
+botella de agua cuenta un hábito, un toque en el panel marca una diaria, y
+Gladys puede leer cada noche lo que queda por hacer.
+
+Funciona con habitica.com y con un Habitica autoalojado.
+
+> **Se agradecen sus comentarios.** Esta integración se probó con un servidor
+> Habitica autoalojado real (Habitica 5.51.0 en Docker, octubre de 2026), aún
+> no en el uso diario, ni con habitica.com. Si algo no funciona como se
+> describe, indíquelo en el
+> [foro de Gladys](https://community.gladysassistant.com) o en las
+> [issues](https://github.com/guim31/gladys-habitica/issues).
+
+## Lo que necesita
+
+- Gladys Assistant 5.1.0 o posterior.
+- Una cuenta de Habitica, en habitica.com o en su propio servidor.
+- Su **ID de usuario** y su **token de API**: en Habitica, **Ajustes** →
+  **Datos del sitio** → **API** (en la aplicación móvil: **Ajustes** →
+  **API**), luego **Mostrar token de API**. El token da acceso completo a la
+  cuenta: guárdelo para usted y reinícielo en el mismo lugar si se filtra.
+
+## Configuración
+
+1. Instale la integración desde la tienda (**Integraciones** → **Habitica**).
+2. En **Configuración**:
+   - **Dirección**: mantenga `https://habitica.com`, o introduzca la
+     dirección de su propio servidor (p. ej. `http://192.168.1.20:3000`).
+   - **ID de usuario** y **Token de API**: copiados de Habitica.
+   - **Aceptar certificados autofirmados**: solo para una dirección
+     `https://` de su propio servidor con certificado autofirmado.
+   - **Umbral de salud baja** (15 por defecto, sobre 50): el umbral del evento
+     «Salud de Habitica baja».
+   - **Recordatorio de diarias pendientes**: cuántas horas antes del final del
+     día de Habitica se activa el evento «Diaria de Habitica aún pendiente» (2
+     por defecto).
+   - **Intervalo de actualización**: 5 minutos por defecto, hasta 30.
+   - **Idioma de los nombres de funciones**: los nombres dados a las
+     funciones al añadir el dispositivo, y las frases enviadas a las escenas.
+3. Use **Probar la conexión**: muestra el nombre de su personaje, su nivel y
+   las diarias pendientes de hoy.
+4. En **Descubrimiento**, añada el dispositivo **Habitica <nombre>**.
+
+El día de Habitica empieza a la hora del **inicio de día personalizado** de su
+cuenta (Ajustes → Datos del sitio en Habitica), en la zona horaria de Gladys.
+
+## Dispositivos
+
+Un dispositivo, **Habitica <nombre del personaje>**, con estas funciones:
+
+| Función              | Lo que cuenta                                           |
+| -------------------- | ------------------------------------------------------- |
+| Salud                | de 0 a 50, redondeada hacia arriba como en Habitica     |
+| Nivel                | el nivel del personaje                                  |
+| Experiencia          | los puntos de experiencia dentro del nivel              |
+| Oro                  | el oro, redondeado hacia abajo                          |
+| Diarias pendientes   | las diarias que tocan hoy y aún no están marcadas       |
+| Pendientes atrasados | los pendientes abiertos con fecha límite anterior a hoy |
+
+Mientras no abra Habitica en un nuevo día (o no use «Empezar el día de
+Habitica»), el nuevo día no ha empezado en Habitica: todas las diarias del día
+cuentan entonces como pendientes, ya que Habitica va a desmarcarlas todas.
+
+Los valores siguen el intervalo de actualización, y cada acción desde Gladys
+los actualiza enseguida.
+
+## Panel
+
+El widget **Diarias de Habitica** muestra las diarias pendientes y su salud,
+la lista de diarias pendientes y luego los pendientes atrasados, y un botón
+para marcar cada una de las cuatro primeras diarias pendientes. Cuando el
+nuevo día aún no ha empezado en Habitica, lo indica y ofrece en su lugar un
+botón **Empezar mi día**: si no, una diaria marcada contaría para ayer.
+
+## Escenas
+
+### Disparadores
+
+- **Diaria de Habitica aún pendiente**: se activa para cada diaria aún sin
+  marcar, el número de horas elegido antes del final del día de Habitica.
+  Filtro: el título de la diaria (vacío: cualquiera). Variables: la diaria,
+  su ID, el número de diarias pendientes, las horas antes del final del día.
+- **Nivel de Habitica ganado**: el personaje ha alcanzado un nuevo nivel.
+  Variables: el nivel, el nivel anterior, la clase.
+- **Salud de Habitica baja**: la salud ha bajado del umbral de la
+  configuración. Una vez por bajada. Variables: salud, umbral, nivel.
+- **Todas las diarias de Habitica hechas**: se acaba de marcar la última
+  diaria del día, en Habitica o desde Gladys. Variable: el número de diarias
+  del día.
+
+Los eventos se detectan en cada lectura: hasta un intervalo de actualización
+más tarde para un nivel, la salud o la última diaria; el recordatorio llega
+siempre a su hora.
+
+### Acciones
+
+- **Marcar una tarea de Habitica**: por su título exacto (sin distinguir
+  mayúsculas ni acentos) o su ID: un hábito + o −, una diaria, un pendiente.
+  El sentido «−» cuenta un mal hábito, o desmarca una diaria o un pendiente.
+  Si el nuevo día aún no ha empezado en Habitica, se empieza antes. Salidas:
+  la tarea, su tipo, la salud, el nivel y el oro después.
+- **Crear un pendiente de Habitica**: añade un pendiente a la cuenta.
+  Salidas: el pendiente y su ID.
+- **Empezar el día de Habitica**: lo que hace Habitica cuando la abre en un
+  nuevo día: las diarias no hechas ayer causan su daño, luego todas las
+  diarias se desmarcan.
+- **Leer Habitica**: las diarias pendientes, los pendientes atrasados y la
+  salud en una frase, para un mensaje o un anuncio de voz. Salidas: la frase,
+  las diarias pendientes, los pendientes atrasados, la salud y el nivel.
+
+### Ideas de escenas
+
+- **Diaria de Habitica aún pendiente** (a las 22 h: 2 horas antes de
+  medianoche) → enviar «{{triggerEvent.data.task}} sigue pendiente» por
+  Telegram.
+- Una etiqueta NFC en la botella de agua → **Marcar una tarea de Habitica**
+  «Beber un vaso de agua».
+- **Todas las diarias de Habitica hechas** → poner en verde la luz del salón
+  durante un minuto.
+- Cada mañana a las 7 h → **Empezar el día de Habitica**, luego **Leer
+  Habitica** y decir la frase por el altavoz.
+
+## Solución de problemas
+
+- **«ID de usuario o token de API rechazado»**: cópielos de nuevo desde
+  Ajustes → Datos del sitio → API. Un token reiniciado debe introducirse de
+  nuevo.
+- **«Habitica no responde»**: para su propio servidor, compruebe la dirección
+  y el puerto, accesibles desde Gladys.
+- **«no hay ninguna API de Habitica en esta dirección»**: la dirección apunta
+  a otra cosa, o falta el prefijo de ruta de su proxy inverso.
+- **«demasiadas solicitudes»**: habitica.com admite 30 solicitudes por minuto
+  y por cuenta, compartidas por todas las herramientas que usa. La
+  integración espera y vuelve a intentarlo.
+- **Las diarias pendientes parecen las de ayer**: el nuevo día aún no ha
+  empezado en Habitica; abra Habitica o use «Empezar mi día».
+- Más detalles con el nivel de registro `debug` en los ajustes de la
+  integración.
+
+## Límites
+
+- Una sola cuenta de Habitica por instalación.
+- Las recompensas no se muestran ni se compran, y los elementos de la lista de
+  comprobación de una tarea no se muestran.
+- Dos tareas con el mismo título no se distinguen por el título: use el ID de
+  la tarea (pantalla de edición de la tarea en Habitica) o cambie el nombre de
+  una.
+- El día de Habitica sigue la zona horaria de Gladys: si su cuenta de Habitica
+  está configurada en otra, el inicio del día y el recordatorio siguen a
+  Gladys.
+- Las condiciones de Habitica piden a las herramientas quedarse muy por debajo
+  de 30 solicitudes por minuto: la integración hace 2 solicitudes por
+  actualización (cada 5 minutos como mucho), más unas 5 por acción.
+- Sin relación con HabitRPG, Inc.
