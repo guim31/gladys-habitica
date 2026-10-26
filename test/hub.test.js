@@ -237,3 +237,71 @@ test('test_connection reports the character', async (t) => {
   const ack = await w.fake.action('test_connection', {});
   assert.equal(ack.data.message.en, 'Habitica OK: gladystest, level 1, 1 daily(ies) left today.');
 });
+
+test('a refused reminder is sent again alone, not the ones already sent', async (t) => {
+  const w = await world(t);
+  w.server.task('Arroser les plantes').completed = false;
+  w.clock.time = Date.UTC(2026, 9, 26, 20, 59);
+  await w.hub.poll();
+  let calls = 0;
+  const publish = w.gladys.publishSceneEvent.bind(w.gladys);
+  t.mock.method(w.gladys, 'publishSceneEvent', async (key, data) => {
+    calls += 1;
+    if (calls === 2) {
+      throw new Error('Gladys restarting');
+    }
+    return publish(key, data);
+  });
+  w.clock.time = Date.UTC(2026, 9, 26, 21, 0, 5);
+  await w.hub.poll();
+  await w.hub.poll();
+  await w.hub.poll();
+  assert.deepEqual(
+    w.fake.sceneEvents.map((event) => event.data.task),
+    ['Méditer 10 minutes', 'Arroser les plantes'],
+  );
+});
+
+test('the last daily left deleted, not checked: no "all done"', async (t) => {
+  const w = await world(t);
+  w.server.tasks = w.server.tasks.filter((task) => task.text !== 'Méditer 10 minutes');
+  await w.hub.poll();
+  assert.deepEqual(events(w), []);
+});
+
+test('the day is counted like the server does, with the offset of the account', async (t) => {
+  const w = await world(t);
+  // Account in UTC+2 (offset −120), Gladys in Paris (UTC+1): the cron ran at
+  // 23:30 Paris, already the new day for Habitica.
+  w.server.user.preferences.timezoneOffset = -120;
+  w.server.user.lastCron = '2026-10-26T22:30:00.000Z';
+  w.clock.time = Date.UTC(2026, 9, 26, 23, 30); // 00:30 Paris, the 27th
+  await w.hub.poll();
+  assert.equal(w.hub.needsCron, false);
+});
+
+test('"−" on a to-do or an unchecked daily is refused before any change', async (t) => {
+  const w = await world(t);
+  w.server.user.lastCron = '2026-10-25T08:00:00.000Z';
+  for (const task of ['Payer la cantine', 'Méditer 10 minutes', 'Arroser les plantes']) {
+    const ack = await w.fake.sceneAction('score_task', { task, direction: 'down' });
+    assert.match(ack.error, /not checked/, task);
+  }
+  assert.deepEqual(
+    w.server.requests.filter((r) => r.method === 'POST'),
+    [],
+    'no cron, no score',
+  );
+});
+
+test('refused credentials are not retried every minute', async (t) => {
+  const w = await world(t, { config: { ...BASE_CONFIG, api_token: 'nope' } });
+  assert.equal(w.hub.nextDelay(), 300_000);
+});
+
+test('no daily due today is said so', async (t) => {
+  const w = await world(t);
+  w.server.tasks = w.server.tasks.filter((task) => task.type !== 'daily');
+  const ack = await w.fake.sceneAction('read_status', {});
+  assert.match(ack.data.outputs.text, /^No daily due today\./);
+});

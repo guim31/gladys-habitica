@@ -101,7 +101,7 @@ siempre a su hora.
 
 - **Marcar una tarea de Habitica**: por su título exacto (sin distinguir
   mayúsculas ni acentos) o su ID: un hábito + o −, una diaria, un pendiente.
-  El sentido «−» cuenta un mal hábito, o desmarca una diaria o un pendiente.
+  El sentido «−» cuenta un mal hábito, o desmarca una diaria marcada.
   Si el nuevo día aún no ha empezado en Habitica, se empieza antes. Salidas:
   la tarea, su tipo, la salud, el nivel y el oro después.
 - **Crear un pendiente de Habitica**: añade un pendiente a la cuenta.

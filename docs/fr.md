@@ -109,8 +109,7 @@ quotidienne ; le rappel est toujours à l'heure.
 
 - **Cocher une tâche Habitica** : par son titre exact (majuscules et accents
   ignorés) ou son identifiant : une habitude + ou −, une quotidienne, une
-  tâche à faire. Le sens « − » compte une mauvaise habitude, ou décoche une
-  quotidienne ou une tâche à faire. Si la nouvelle journée n'a pas encore
+  tâche à faire. Le sens « − » compte une mauvaise habitude, ou décoche une quotidienne cochée. Si la nouvelle journée n'a pas encore
   commencé dans Habitica, elle est d'abord commencée. Sorties : la tâche, son
   type, les points de vie, le niveau et l'or après coup.
 - **Créer une tâche à faire Habitica** : ajoute une tâche à faire au compte.

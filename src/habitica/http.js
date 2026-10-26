@@ -1,11 +1,11 @@
 // -----------------------------------------------------------------------------
 // The one function that talks to the network: an HTTP(S) request with a JSON
 // body, on node:http / node:https. Not on fetch: fetch cannot accept the
-// self-signed certificate of one server only (a Vikunja behind a home
+// self-signed certificate of one server only (a Habitica behind a home
 // reverse proxy may serve one), node:https can, per request.
 //
 // The client takes this function as a parameter: the tests replace it with an
-// in-memory Vikunja (test/helpers/fakeVikunja.js).
+// in-memory Habitica (test/helpers/fakeHabitica.js).
 // -----------------------------------------------------------------------------
 
 import http from 'node:http';

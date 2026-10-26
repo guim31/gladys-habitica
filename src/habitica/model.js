@@ -35,6 +35,7 @@ export const MAX_HEALTH = 50;
  * The character, from GET /api/v3/user.
  * @returns {{ id: string, name: string, health: number, mana: number, experience: number,
  *   gold: number, level: number, className: string, dayStart: number, lastCron: number|null,
+ *   timezoneOffset: number|null,
  *   sleeping: boolean }}
  */
 export function parseUser(raw) {
@@ -55,6 +56,8 @@ export function parseUser(raw) {
     className: text(stats.class),
     dayStart: dayStart >= 0 && dayStart <= 23 ? dayStart : 0,
     lastCron: time(user.lastCron),
+    // Minutes, the sign of JavaScript's getTimezoneOffset (UTC − local).
+    timezoneOffset: Number.isFinite(preferences.timezoneOffset) ? preferences.timezoneOffset : null,
     sleeping: preferences.sleep === true,
   };
 }
@@ -174,6 +177,27 @@ export function habiticaDay(now, timeZone, dayStart = 0) {
     return { start: at(localDay(today.start - 1, timeZone).start), end: start };
   }
   return { start, end: at(today.end) };
+}
+
+/**
+ * Whether the "cron" of the current day still has to run, the way the server
+ * counts days: with the time zone offset stored in the account, not the time
+ * zone of Gladys (they may differ; with the one of Gladys, a cron run late in
+ * the evening could look missing for a whole day). Without an offset, the
+ * Habitica day of Gladys (`fallbackStart`).
+ */
+export function needsCron(user, now, fallbackStart) {
+  if (user.lastCron === null) {
+    return false;
+  }
+  if (user.timezoneOffset === null) {
+    return user.lastCron < fallbackStart;
+  }
+  const DAY_MS = 24 * HOUR_MS;
+  const offset = user.timezoneOffset * 60_000;
+  const shift = user.dayStart * HOUR_MS;
+  const start = Math.floor((now - offset - shift) / DAY_MS) * DAY_MS + shift + offset;
+  return user.lastCron < start;
 }
 
 /** `YYYY-MM-DD` of an instant, in a time zone. */

@@ -151,6 +151,12 @@ export const ACTION_TEXT = {
     de: 'Diese Aufgabe ist schon abgehakt: Die Liste wird aktualisiert.',
     es: 'Esta tarea ya está marcada: la lista se actualiza.',
   },
+  notChecked: {
+    en: 'This task is not checked: nothing to uncheck (− is for a bad habit or a checked daily).',
+    fr: "Cette tâche n'est pas cochée : rien à décocher (− sert à une mauvaise habitude ou une quotidienne cochée).",
+    de: 'Diese Aufgabe ist nicht abgehakt: nichts zurückzusetzen (− gilt für eine schlechte Gewohnheit oder eine abgehakte Tägliche).',
+    es: 'Esta tarea no está marcada: nada que desmarcar (− sirve para un mal hábito o una diaria marcada).',
+  },
   notDue: {
     en: 'This daily is not due today.',
     fr: "Cette quotidienne n'est pas à faire aujourd'hui.",
@@ -195,12 +201,14 @@ const join = (titles, and) =>
 export const TODAY_TEXT = {
   en: {
     none: 'Every daily is done today.',
+    noDailies: 'No daily due today.',
     list: (count, titles) => `${count} daily(ies) left today: ${join(titles, 'and')}.`,
     overdue: (count) => ` ${count} overdue to-do(s).`,
     health: (health, level) => ` Health ${health}/50, level ${level}.`,
   },
   fr: {
     none: "Toutes les quotidiennes sont faites aujourd'hui.",
+    noDailies: "Aucune quotidienne à faire aujourd'hui.",
     list: (count, titles) =>
       `${count} quotidienne(s) restante(s) aujourd'hui : ${join(titles, 'et')}.`,
     overdue: (count) => ` ${count} tâche(s) à faire en retard.`,
@@ -208,12 +216,14 @@ export const TODAY_TEXT = {
   },
   de: {
     none: 'Heute sind alle Täglichen erledigt.',
+    noDailies: 'Heute ist keine Tägliche fällig.',
     list: (count, titles) => `Heute noch ${count} Tägliche: ${join(titles, 'und')}.`,
     overdue: (count) => ` ${count} überfällige(s) To-do(s).`,
     health: (health, level) => ` Lebenspunkte ${health}/50, Stufe ${level}.`,
   },
   es: {
     none: 'Todas las diarias están hechas hoy.',
+    noDailies: 'Hoy no toca ninguna diaria.',
     list: (count, titles) => `${count} diaria(s) pendiente(s) hoy: ${join(titles, 'y')}.`,
     overdue: (count) => ` ${count} pendiente(s) atrasado(s).`,
     health: (health, level) => ` Salud ${health}/50, nivel ${level}.`,

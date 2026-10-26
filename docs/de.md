@@ -109,8 +109,7 @@ Tägliche; die Erinnerung kommt immer pünktlich.
 
 - **Habitica-Aufgabe abhaken**: per genauem Titel (Groß- und Kleinschreibung
   und Akzente egal) oder ID: eine Gewohnheit + oder −, eine Tägliche, ein
-  To-do. Die Richtung „−“ zählt eine schlechte Gewohnheit oder hakt eine
-  Tägliche oder ein To-do wieder ab. Hat der neue Tag in Habitica noch nicht
+  To-do. Die Richtung „−“ zählt eine schlechte Gewohnheit oder setzt eine abgehakte Tägliche zurück. Hat der neue Tag in Habitica noch nicht
   begonnen, wird er zuerst begonnen. Ausgaben: die Aufgabe, ihr Typ,
   Lebenspunkte, Stufe und Gold danach.
 - **Habitica-To-do erstellen**: fügt dem Konto ein To-do hinzu. Ausgaben: das

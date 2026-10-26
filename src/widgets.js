@@ -54,6 +54,12 @@ export const TEXT = {
     de: 'Heute sind alle Täglichen erledigt.',
     es: 'Todas las diarias están hechas hoy.',
   },
+  noDailies: {
+    en: 'No daily due today.',
+    fr: "Aucune quotidienne à faire aujourd'hui.",
+    de: 'Heute ist keine Tägliche fällig.',
+    es: 'Hoy no toca ninguna diaria.',
+  },
   dailiesLeft: { en: 'Dailies left', fr: 'Quotidiennes', de: 'Offene Tägliche', es: 'Diarias' },
   health: { en: 'Health', fr: 'Points de vie', de: 'Lebenspunkte', es: 'Salud' },
   daily: { en: 'Daily', fr: 'Quotidienne', de: 'Tägliche', es: 'Diaria' },
@@ -135,7 +141,8 @@ async function get(hub, { language = 'en' }) {
     ...summary.overdue.map((task) => overdueRow(hub, task, language)),
   ].slice(0, MAX_ROWS);
   if (summary.dailiesLeft === 0 && components.length < 3) {
-    components.push({ type: 'text', variant: 'body', text: t(TEXT.nothing, language) });
+    const text = summary.dailies === 0 ? TEXT.noDailies : TEXT.nothing;
+    components.push({ type: 'text', variant: 'body', text: t(text, language) });
   }
   if (rows.length > 0) {
     components.push({ type: 'status', items: rows });

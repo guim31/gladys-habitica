@@ -20,6 +20,7 @@ import {
   TASK_TYPES,
   findTask,
   habiticaDay,
+  needsCron,
   parseTasks,
   parseUser,
   resolveTimeZone,
@@ -68,6 +69,8 @@ export const HUB_TIMINGS = {
 const REFRESH_WAIT_MS = 3_000;
 // Titles read out by the "Read Habitica" action.
 const MAX_TITLES = 10;
+
+const SLOW_RETRY = new Set([ERROR_KINDS.AUTH, ERROR_KINDS.NOT_HABITICA, ERROR_KINDS.REDIRECT]);
 
 const healthOf = (user) => Math.min(MAX_HEALTH, Math.max(0, Math.ceil(user.health)));
 
@@ -211,6 +214,11 @@ export class HabiticaHub {
   /** The interval, shortened to the reminder moment or the next day start. */
   nextDelay(readAt = this.now()) {
     if (this.error) {
+      // Refused credentials or a wrong address do not fix themselves: a new
+      // configuration reads again at once.
+      if (SLOW_RETRY.has(this.error.kind)) {
+        return this.config.pollIntervalMs;
+      }
       const wait = this.error.retryAfterMs ?? 0;
       return Math.max(Math.min(this.config.pollIntervalMs, this.timings.retryMs), wait);
     }
@@ -261,7 +269,7 @@ export class HabiticaHub {
       this.tasks = parseTasks(rawTasks);
       this.day = habiticaDay(now, this.timeZone, user.dayStart);
       // The cron of the new day has not run: the user did not open Habitica yet.
-      this.needsCron = user.lastCron !== null && user.lastCron < this.day.start;
+      this.needsCron = needsCron(user, now, this.day.start);
       this.readAt = now;
       this.recovered(now);
     } catch (err) {
@@ -460,6 +468,8 @@ export class HabiticaHub {
       health,
       dayStart: this.day.start,
       dailiesLeft: summary.dailiesLeft,
+      leftIds: summary.left.map((task) => task.id),
+      reminderSent: null,
     };
     const saved = this.saved;
     if (saved.scope !== scope || !Number.isFinite(saved.readAt)) {
@@ -473,8 +483,12 @@ export class HabiticaHub {
     // cron of the day ran, every daily of the day is still to do.
     const reminder = this.reminderAt();
     const from = Math.max(saved.readAt, now - this.timings.maxLateMs);
+    // The dailies already announced for this reminder (a refused event is
+    // tried again, not the ones before it).
+    const sent = saved.reminderSent?.at === reminder ? saved.reminderSent.ids : [];
     if (reminder > from && reminder <= now) {
-      for (const task of summary.left) {
+      next.reminderSent = { at: reminder, ids: [...sent] };
+      for (const task of summary.left.filter((item) => !sent.includes(item.id))) {
         const data = {
           task: task.title,
           task_id: task.id,
@@ -486,7 +500,10 @@ export class HabiticaHub {
           next.readAt = reminder - 1;
           break;
         }
+        next.reminderSent.ids.push(task.id);
       }
+    } else if (saved.reminderSent?.at === reminder) {
+      next.reminderSent = saved.reminderSent;
     }
 
     if (Number.isFinite(saved.level) && this.user.level > saved.level) {
@@ -508,16 +525,22 @@ export class HabiticaHub {
       }
     }
 
-    // The last daily of the day checked, within the same Habitica day.
+    // The last daily of the day checked, within the same Habitica day: the
+    // dailies left before are checked now (not deleted, nor no longer due).
+    const leftBefore = Array.isArray(saved.leftIds) ? saved.leftIds : [];
+    const checked = (id) =>
+      this.tasks.some((task) => task.id === id && task.isDue && task.completed);
     if (
       saved.dayStart === this.day.start &&
-      saved.dailiesLeft > 0 &&
+      leftBefore.length > 0 &&
       summary.dailiesLeft === 0 &&
       summary.dailies > 0 &&
-      !this.needsCron
+      !this.needsCron &&
+      leftBefore.every(checked)
     ) {
       if (!(await this.fire(TRIGGERS.ALL_DAILIES_DONE, { dailies: summary.dailies }))) {
         next.dailiesLeft = saved.dailiesLeft;
+        next.leftIds = leftBefore;
       }
     }
     this.save(next);
@@ -611,7 +634,17 @@ export class HabiticaHub {
         throw new Error(pick(ACTION_TEXT[key], this.language));
       }
       task = item;
-      if (user.lastCron !== null && user.lastCron < day.start) {
+      const late = needsCron(user, now, day.start);
+      if (
+        direction === 'down' &&
+        (task.type === TASK_TYPES.TODO ||
+          (task.type === TASK_TYPES.DAILY && (late || !task.completed)))
+      ) {
+        // An open to-do or an unchecked daily has nothing to uncheck (and a
+        // checked to-do is no longer listed).
+        throw new Error(pick(ACTION_TEXT.notChecked, this.language));
+      }
+      if (late) {
         await client.cron();
         logger.info('New Habitica day started from Gladys before checking a task');
         // The cron unchecked the dailies of yesterday.
@@ -629,7 +662,8 @@ export class HabiticaHub {
       if (err instanceof HabiticaError && err.status === 401 && err.code === 'NotAuthorized') {
         // "Your session is outdated": already checked (or unchecked) meanwhile.
         this.poll().catch(() => {});
-        throw new Error(pick(ACTION_TEXT.alreadyDone, this.language), { cause: err });
+        const key = direction === 'down' ? 'notChecked' : 'alreadyDone';
+        throw new Error(pick(ACTION_TEXT[key], this.language), { cause: err });
       }
       throw this.explain(err);
     }
@@ -680,6 +714,10 @@ export class HabiticaHub {
     if (this.error) {
       throw this.explain(new HabiticaError(this.error.kind, this.error.message));
     }
+    if (!this.user) {
+      // The configuration changed during the reading.
+      throw new Error(pick(ACTION_TEXT.notConfigured, this.language));
+    }
     const summary = this.summary();
     const texts = TODAY_TEXT[this.language] ?? TODAY_TEXT.en;
     const titles = summary.left.slice(0, MAX_TITLES).map((task) => task.title);
@@ -689,7 +727,11 @@ export class HabiticaHub {
     }
     const health = healthOf(this.user);
     const text =
-      (summary.dailiesLeft === 0 ? texts.none : texts.list(summary.dailiesLeft, titles)) +
+      (summary.dailies === 0
+        ? texts.noDailies
+        : summary.dailiesLeft === 0
+          ? texts.none
+          : texts.list(summary.dailiesLeft, titles)) +
       (summary.todosOverdue > 0 ? texts.overdue(summary.todosOverdue) : '') +
       texts.health(health, this.user.level);
     return {
@@ -715,6 +757,9 @@ export class HabiticaHub {
         REPORT_TEXT[language].failed(pick(status.message, language)),
       );
       throw new Error(message[this.language]);
+    }
+    if (!this.user) {
+      throw new Error(pick(ACTION_TEXT.notConfigured, this.language));
     }
     const left = this.summary().dailiesLeft;
     return allLanguages((language) =>

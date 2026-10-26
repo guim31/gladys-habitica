@@ -99,7 +99,7 @@ level, health or the last daily; the reminder is always on time.
 
 - **Check a Habitica task**: by its exact title (case and accents ignored) or
   its id: a habit + or −, a daily, a to-do. The direction "−" scores a bad
-  habit, or unchecks a daily or a to-do. If the new day has not started yet in
+  habit, or unchecks a checked daily. If the new day has not started yet in
   Habitica, it is started first. Outputs: the task, its type, health, level
   and gold after scoring.
 - **Create a Habitica to-do**: adds a to-do to the account. Outputs: the to-do

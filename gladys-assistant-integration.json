@@ -567,7 +567,7 @@
         "de": "Eine Gewohnheit + oder −, eine Tägliche oder ein To-do, per Titel. Beginnt bei Bedarf zuerst den neuen Tag.",
         "es": "Un hábito + o −, una diaria o un pendiente, por su título. Empieza antes el nuevo día si hace falta."
       },
-      "timeout_seconds": 20,
+      "timeout_seconds": 30,
       "fields": [
         {
           "key": "task",
@@ -596,10 +596,10 @@
             "es": "Sentido (vacío: +)"
           },
           "description": {
-            "en": "− scores a bad habit, or unchecks a daily or a to-do.",
-            "fr": "− compte une mauvaise habitude, ou décoche une quotidienne ou une tâche à faire.",
-            "de": "− zählt eine schlechte Gewohnheit oder hakt eine Tägliche oder ein To-do wieder ab.",
-            "es": "− cuenta un mal hábito, o desmarca una diaria o un pendiente."
+            "en": "− scores a bad habit, or unchecks a checked daily.",
+            "fr": "− compte une mauvaise habitude, ou décoche une quotidienne cochée.",
+            "de": "− zählt eine schlechte Gewohnheit oder setzt eine abgehakte Tägliche zurück.",
+            "es": "− cuenta un mal hábito, o desmarca una diaria marcada."
           },
           "options": [
             {
@@ -614,10 +614,10 @@
             {
               "value": "down",
               "label": {
-                "en": "− (minus, uncheck)",
-                "fr": "− (moins, décocher)",
-                "de": "− (minus, zurücksetzen)",
-                "es": "− (menos, desmarcar)"
+                "en": "− (minus, uncheck a daily)",
+                "fr": "− (moins, décocher une quotidienne)",
+                "de": "− (minus, Tägliche zurücksetzen)",
+                "es": "− (menos, desmarcar una diaria)"
               }
             }
           ]
