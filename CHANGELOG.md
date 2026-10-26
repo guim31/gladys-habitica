@@ -10,6 +10,8 @@ the notes of the version's GitHub Release.
 
 ## [Unreleased]
 
+## [1.0.0] - 2026-10-26
+
 ### Added
 
 - Habitica in Gladys, on habitica.com or a self-hosted server: a "Habitica
@@ -27,3 +29,6 @@ the notes of the version's GitHub Release.
 - The Custom Day Start of the account followed, in the time zone of Gladys; at
   most one reading every 5 minutes, within Habitica's API limits.
 - Every text in English, French, German and Spanish.
+
+[Unreleased]: https://github.com/guim31/gladys-habitica/compare/v1.0.0...HEAD
+[1.0.0]: https://github.com/guim31/gladys-habitica/releases/tag/v1.0.0
