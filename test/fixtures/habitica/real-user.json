@@ -1,0 +1,265 @@
+{
+  "success": true,
+  "data": {
+    "auth": {
+      "local": {
+        "email": "gladystest@example.org",
+        "username": "gladystest",
+        "lowerCaseUsername": "gladystest",
+        "has_password": true
+      },
+      "timestamps": {
+        "created": "2026-10-26T16:03:14.904Z",
+        "loggedin": "2026-10-26T16:03:14.904Z",
+        "updated": "2026-10-26T16:04:55.224Z"
+      },
+      "facebook": {},
+      "google": {},
+      "apple": {}
+    },
+    "permissions": {
+      "fullAccess": true
+    },
+    "flags": {
+      "tour": {
+        "intro": -2,
+        "classes": -2,
+        "stats": -2,
+        "tavern": -2,
+        "party": -2,
+        "guilds": -2,
+        "challenges": -2,
+        "market": -2,
+        "pets": -2,
+        "mounts": -2,
+        "hall": -2,
+        "equipment": -2,
+        "groupPlans": -2
+      },
+      "tutorial": {
+        "common": {
+          "habits": false,
+          "dailies": false,
+          "todos": false,
+          "rewards": false,
+          "party": false,
+          "pets": false,
+          "gems": false,
+          "skills": false,
+          "classes": false,
+          "tavern": false,
+          "equipment": false,
+          "items": false,
+          "mounts": false,
+          "inbox": false,
+          "stats": false
+        },
+        "ios": {
+          "addTask": false,
+          "editTask": false,
+          "deleteTask": false,
+          "filterTask": false,
+          "groupPets": false,
+          "inviteParty": false,
+          "reorderTask": false
+        }
+      },
+      "verifiedUsername": true,
+      "customizationsNotification": true,
+      "showTour": false,
+      "dropsEnabled": false,
+      "itemsEnabled": true,
+      "lastNewStuffRead": "",
+      "rewrite": true,
+      "classSelected": false,
+      "rebirthEnabled": false,
+      "levelDrops": {},
+      "recaptureEmailsPhase": 0,
+      "weeklyRecapEmailsPhase": 0,
+      "lastWeeklyRecap": "2026-10-26T16:03:14.904Z",
+      "communityGuidelinesAccepted": false,
+      "cronCount": 0,
+      "welcomed": false,
+      "armoireEnabled": true,
+      "armoireOpened": false,
+      "armoireEmpty": false,
+      "cardReceived": false,
+      "warnedLowHealth": false,
+      "initializedUserHistory": true,
+      "thirdPartyTools": "2026-10-26T16:03:15.033Z",
+      "newStuff": false
+    },
+    "preferences": {
+      "hair": {
+        "color": "red",
+        "base": 3,
+        "bangs": 1,
+        "beard": 0,
+        "mustache": 0,
+        "flower": 1
+      },
+      "emailNotifications": {
+        "unsubscribeFromAll": false,
+        "newPM": true,
+        "kickedGroup": true,
+        "wonChallenge": true,
+        "giftedGems": true,
+        "giftedSubscription": true,
+        "invitedParty": true,
+        "invitedGuild": true,
+        "questStarted": true,
+        "invitedQuest": true,
+        "importantAnnouncements": true,
+        "weeklyRecaps": true,
+        "onboarding": true,
+        "majorUpdates": true,
+        "subscriptionReminders": true,
+        "contentRelease": true
+      },
+      "pushNotifications": {
+        "unsubscribeFromAll": false,
+        "newPM": true,
+        "wonChallenge": true,
+        "giftedGems": true,
+        "giftedSubscription": true,
+        "invitedParty": true,
+        "invitedGuild": true,
+        "questStarted": true,
+        "invitedQuest": true,
+        "majorUpdates": true,
+        "mentionParty": true,
+        "mentionJoinedGuild": true,
+        "mentionUnjoinedGuild": true,
+        "partyActivity": true,
+        "contentRelease": true
+      },
+      "suppressModals": {
+        "levelUp": false,
+        "hatchPet": false,
+        "raisePet": false,
+        "streak": false
+      },
+      "tasks": {
+        "activeFilter": {
+          "habit": "all",
+          "daily": "all",
+          "todo": "remaining",
+          "reward": "all"
+        },
+        "groupByChallenge": false,
+        "confirmScoreNotes": false,
+        "mirrorGroupTasks": []
+      },
+      "language": "en",
+      "dayStart": 0,
+      "size": "slim",
+      "hideHeader": false,
+      "skin": "915533",
+      "shirt": "blue",
+      "timezoneOffset": 0,
+      "sound": "rosstavoTheme",
+      "chair": "none",
+      "allocationMode": "flat",
+      "autoEquip": true,
+      "costume": false,
+      "dateFormat": "MM/dd/yyyy",
+      "sleep": false,
+      "stickyHeader": true,
+      "disableClasses": false,
+      "newTaskEdit": false,
+      "dailyDueDefaultView": false,
+      "advancedCollapsed": false,
+      "toolbarCollapsed": false,
+      "reverseChatOrder": false,
+      "developerMode": false,
+      "displayInviteToPartyWhenPartyIs1": true,
+      "webhooks": {},
+      "improvementCategories": [],
+      "background": "violet"
+    },
+    "profile": {
+      "name": "gladystest"
+    },
+    "stats": {
+      "buffs": {
+        "str": 0,
+        "int": 0,
+        "per": 0,
+        "con": 0,
+        "stealth": 0,
+        "streaks": false,
+        "snowball": false,
+        "spookySparkles": false,
+        "shinySeed": false,
+        "seafoam": false
+      },
+      "training": {
+        "int": 0,
+        "per": 0,
+        "str": 0,
+        "con": 0
+      },
+      "hp": 50,
+      "mp": 13,
+      "exp": 18,
+      "gp": 3,
+      "lvl": 1,
+      "class": "warrior",
+      "points": 0,
+      "str": 0,
+      "con": 0,
+      "int": 0,
+      "per": 0
+    },
+    "_id": "fe288c5d-45f8-4612-b581-53b4f5af2f18",
+    "_v": 13,
+    "lastCron": "2026-10-26T16:03:14.908Z",
+    "notifications": [
+      {
+        "type": "ACHIEVEMENT",
+        "data": {
+          "achievement": "completedTask",
+          "icon": "achievement-completedTask",
+          "message": "Complete a task",
+          "modalText": "A task can be a Habit, Daily, or To Do. Continue completing them to receive all sorts of rewards!"
+        },
+        "seen": false,
+        "id": "064cdb25-8db7-4ab0-afa4-24fdb95b8552"
+      },
+      {
+        "type": "FIRST_DROPS",
+        "data": {
+          "egg": "FlyingPig",
+          "hatchingPotion": "White"
+        },
+        "seen": false,
+        "id": "6bfa17d4-7452-45df-913d-eb756069ac28"
+      }
+    ],
+    "id": "fe288c5d-45f8-4612-b581-53b4f5af2f18"
+  },
+  "notifications": [
+    {
+      "type": "ACHIEVEMENT",
+      "data": {
+        "achievement": "completedTask",
+        "icon": "achievement-completedTask",
+        "message": "Complete a task",
+        "modalText": "A task can be a Habit, Daily, or To Do. Continue completing them to receive all sorts of rewards!"
+      },
+      "seen": false,
+      "id": "064cdb25-8db7-4ab0-afa4-24fdb95b8552"
+    },
+    {
+      "type": "FIRST_DROPS",
+      "data": {
+        "egg": "FlyingPig",
+        "hatchingPotion": "White"
+      },
+      "seen": false,
+      "id": "6bfa17d4-7452-45df-913d-eb756069ac28"
+    }
+  ],
+  "userV": 13,
+  "appVersion": "5.51.0"
+}

@@ -1,0 +1,318 @@
+{
+  "success": true,
+  "data": [
+    {
+      "_id": "8f66a5ea-3120-48ee-8d7e-434d8ed902ad",
+      "type": "habit",
+      "text": "Grignoter",
+      "notes": "",
+      "tags": [],
+      "value": 0,
+      "priority": 1,
+      "attribute": "str",
+      "challenge": {},
+      "group": {
+        "completedBy": {},
+        "assignedUsers": []
+      },
+      "byHabitica": false,
+      "up": false,
+      "down": true,
+      "counterUp": 0,
+      "counterDown": 0,
+      "frequency": "daily",
+      "history": [],
+      "reminders": [],
+      "createdAt": "2026-10-26T16:04:52.799Z",
+      "updatedAt": "2026-10-26T16:04:52.799Z",
+      "userId": "fe288c5d-45f8-4612-b581-53b4f5af2f18",
+      "id": "8f66a5ea-3120-48ee-8d7e-434d8ed902ad"
+    },
+    {
+      "_id": "9a965cdd-2f01-48bc-992f-94db9a7f9cc3",
+      "type": "habit",
+      "text": "Boire un verre d'eau",
+      "notes": "",
+      "tags": [],
+      "value": 1,
+      "priority": 1,
+      "attribute": "str",
+      "challenge": {},
+      "group": {
+        "completedBy": {},
+        "assignedUsers": []
+      },
+      "byHabitica": false,
+      "up": true,
+      "down": false,
+      "counterUp": 1,
+      "counterDown": 0,
+      "frequency": "daily",
+      "history": [
+        {
+          "date": 1793030694766,
+          "value": 1,
+          "scoredUp": 1,
+          "scoredDown": 0
+        }
+      ],
+      "reminders": [],
+      "createdAt": "2026-10-26T16:04:52.376Z",
+      "updatedAt": "2026-10-26T16:04:54.772Z",
+      "userId": "fe288c5d-45f8-4612-b581-53b4f5af2f18",
+      "id": "9a965cdd-2f01-48bc-992f-94db9a7f9cc3"
+    },
+    {
+      "_id": "0af17171-77b6-41f5-b074-cf5b45fd919c",
+      "type": "daily",
+      "text": "Sortir les poubelles",
+      "notes": "",
+      "tags": [],
+      "value": 0,
+      "priority": 1,
+      "attribute": "str",
+      "challenge": {},
+      "group": {
+        "completedBy": {},
+        "assignedUsers": []
+      },
+      "byHabitica": false,
+      "frequency": "weekly",
+      "everyX": 1,
+      "startDate": "2026-10-01T00:00:00.000Z",
+      "repeat": {
+        "m": false,
+        "t": false,
+        "w": false,
+        "th": true,
+        "f": false,
+        "s": false,
+        "su": false
+      },
+      "streak": 0,
+      "nextDue": [
+        "2026-10-29T00:00:00.000Z",
+        "2026-11-05T00:00:00.000Z",
+        "2026-11-12T00:00:00.000Z",
+        "2026-11-19T00:00:00.000Z",
+        "2026-11-26T00:00:00.000Z",
+        "2026-12-03T00:00:00.000Z"
+      ],
+      "yesterDaily": true,
+      "history": [],
+      "completed": false,
+      "collapseChecklist": false,
+      "daysOfMonth": [],
+      "weeksOfMonth": [],
+      "checklist": [],
+      "reminders": [],
+      "createdAt": "2026-10-26T16:04:53.497Z",
+      "updatedAt": "2026-10-26T16:04:53.497Z",
+      "userId": "fe288c5d-45f8-4612-b581-53b4f5af2f18",
+      "isDue": false,
+      "id": "0af17171-77b6-41f5-b074-cf5b45fd919c"
+    },
+    {
+      "_id": "f130a073-4b2f-4114-8c07-722e4c294060",
+      "type": "daily",
+      "text": "Méditer 10 minutes",
+      "notes": "",
+      "tags": [],
+      "value": 0,
+      "priority": 1,
+      "attribute": "str",
+      "challenge": {},
+      "group": {
+        "completedBy": {},
+        "assignedUsers": []
+      },
+      "byHabitica": false,
+      "frequency": "daily",
+      "everyX": 1,
+      "startDate": "2026-10-01T00:00:00.000Z",
+      "repeat": {
+        "m": true,
+        "t": true,
+        "w": true,
+        "th": true,
+        "f": true,
+        "s": true,
+        "su": true
+      },
+      "streak": 0,
+      "nextDue": [
+        "2026-10-27T00:00:00.000Z",
+        "2026-10-28T00:00:00.000Z",
+        "2026-10-29T00:00:00.000Z",
+        "2026-10-30T00:00:00.000Z",
+        "2026-10-31T00:00:00.000Z",
+        "2026-11-01T00:00:00.000Z"
+      ],
+      "yesterDaily": true,
+      "history": [],
+      "completed": false,
+      "collapseChecklist": false,
+      "daysOfMonth": [],
+      "weeksOfMonth": [],
+      "checklist": [],
+      "reminders": [],
+      "createdAt": "2026-10-26T16:04:53.237Z",
+      "updatedAt": "2026-10-26T16:04:53.237Z",
+      "userId": "fe288c5d-45f8-4612-b581-53b4f5af2f18",
+      "isDue": true,
+      "id": "f130a073-4b2f-4114-8c07-722e4c294060"
+    },
+    {
+      "_id": "1ec4e986-6584-4bc9-98f3-63bec4dcecf8",
+      "type": "daily",
+      "text": "Arroser les plantes",
+      "notes": "",
+      "tags": [],
+      "value": 1,
+      "priority": 1,
+      "attribute": "str",
+      "challenge": {},
+      "group": {
+        "completedBy": {},
+        "assignedUsers": []
+      },
+      "byHabitica": false,
+      "frequency": "daily",
+      "everyX": 1,
+      "startDate": "2026-10-01T00:00:00.000Z",
+      "repeat": {
+        "m": true,
+        "t": true,
+        "w": true,
+        "th": true,
+        "f": true,
+        "s": true,
+        "su": true
+      },
+      "streak": 1,
+      "nextDue": [
+        "2026-10-27T00:00:00.000Z",
+        "2026-10-28T00:00:00.000Z",
+        "2026-10-29T00:00:00.000Z",
+        "2026-10-30T00:00:00.000Z",
+        "2026-10-31T00:00:00.000Z",
+        "2026-11-01T00:00:00.000Z"
+      ],
+      "yesterDaily": true,
+      "history": [
+        {
+          "date": 1793030694564,
+          "value": 1,
+          "isDue": true,
+          "completed": true
+        }
+      ],
+      "completed": true,
+      "collapseChecklist": false,
+      "daysOfMonth": [],
+      "weeksOfMonth": [],
+      "checklist": [],
+      "reminders": [],
+      "createdAt": "2026-10-26T16:04:52.987Z",
+      "updatedAt": "2026-10-26T16:04:54.573Z",
+      "userId": "fe288c5d-45f8-4612-b581-53b4f5af2f18",
+      "isDue": true,
+      "id": "1ec4e986-6584-4bc9-98f3-63bec4dcecf8"
+    },
+    {
+      "_id": "f30a5228-3cab-4194-a493-7db136ba6b3c",
+      "type": "todo",
+      "text": "Réserver le garage",
+      "notes": "",
+      "tags": [],
+      "value": 0,
+      "priority": 1,
+      "attribute": "str",
+      "challenge": {},
+      "group": {
+        "completedBy": {},
+        "assignedUsers": []
+      },
+      "byHabitica": false,
+      "date": "2026-11-05T00:00:00.000Z",
+      "completed": false,
+      "collapseChecklist": false,
+      "checklist": [],
+      "reminders": [],
+      "createdAt": "2026-10-26T16:04:54.090Z",
+      "updatedAt": "2026-10-26T16:04:54.090Z",
+      "userId": "fe288c5d-45f8-4612-b581-53b4f5af2f18",
+      "id": "f30a5228-3cab-4194-a493-7db136ba6b3c"
+    },
+    {
+      "_id": "8891b6e5-8eec-4873-9f11-5c16c3ba5348",
+      "type": "todo",
+      "text": "Payer la cantine",
+      "notes": "",
+      "tags": [],
+      "value": 0,
+      "priority": 1,
+      "attribute": "str",
+      "challenge": {},
+      "group": {
+        "completedBy": {},
+        "assignedUsers": []
+      },
+      "byHabitica": false,
+      "date": "2026-10-20T00:00:00.000Z",
+      "completed": false,
+      "collapseChecklist": false,
+      "checklist": [],
+      "reminders": [],
+      "createdAt": "2026-10-26T16:04:53.856Z",
+      "updatedAt": "2026-10-26T16:04:53.856Z",
+      "userId": "fe288c5d-45f8-4612-b581-53b4f5af2f18",
+      "id": "8891b6e5-8eec-4873-9f11-5c16c3ba5348"
+    },
+    {
+      "_id": "990d43ba-7939-4d04-8286-0197ad45410c",
+      "type": "reward",
+      "text": "Un épisode de série",
+      "notes": "",
+      "tags": [],
+      "value": 20,
+      "priority": 1,
+      "attribute": "str",
+      "challenge": {},
+      "group": {
+        "completedBy": {},
+        "assignedUsers": []
+      },
+      "byHabitica": false,
+      "reminders": [],
+      "createdAt": "2026-10-26T16:04:54.336Z",
+      "updatedAt": "2026-10-26T16:04:54.336Z",
+      "userId": "fe288c5d-45f8-4612-b581-53b4f5af2f18",
+      "id": "990d43ba-7939-4d04-8286-0197ad45410c"
+    }
+  ],
+  "notifications": [
+    {
+      "type": "ACHIEVEMENT",
+      "data": {
+        "achievement": "completedTask",
+        "icon": "achievement-completedTask",
+        "message": "Complete a task",
+        "modalText": "A task can be a Habit, Daily, or To Do. Continue completing them to receive all sorts of rewards!"
+      },
+      "seen": false,
+      "id": "064cdb25-8db7-4ab0-afa4-24fdb95b8552"
+    },
+    {
+      "type": "FIRST_DROPS",
+      "data": {
+        "egg": "FlyingPig",
+        "hatchingPotion": "White"
+      },
+      "seen": false,
+      "id": "6bfa17d4-7452-45df-913d-eb756069ac28"
+    }
+  ],
+  "userV": 13,
+  "appVersion": "5.51.0"
+}

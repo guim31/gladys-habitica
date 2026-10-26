@@ -1,177 +1,834 @@
 {
   "manifest_version": 1,
   "type": "device",
-  "name": "Demo Devices Template",
+  "name": "Habitica",
   "description": {
-    "en": "Starter template showing sensors, a switch, a dimmable light and a smart plug.",
-    "fr": "Template de démarrage : capteurs, interrupteur, lampe variable et prise connectée."
+    "en": "Habitica in Gladys: health, level, dailies left, checks from a scene or the dashboard.",
+    "fr": "Habitica dans Gladys : vie, niveau, quotidiennes restantes, cochées par scène ou tableau de bord.",
+    "de": "Habitica in Gladys: Lebenspunkte, Stufe, offene Tägliche, abhaken per Szene oder Dashboard.",
+    "es": "Habitica en Gladys: salud, nivel, diarias pendientes, marcadas desde una escena o el panel."
   },
   "version": "1.0.0",
-  "docker_image": "ghcr.io/gladysassistant/integration-template-js:1.0.0",
+  "docker_image": "ghcr.io/guim31/gladys-habitica:1.0.0",
   "gladys_version": ">=5.1.0",
-  "cover_image": "https://raw.githubusercontent.com/GladysAssistant/integration-template-js/master/cover.png",
-  "categories": ["lighting", "security", "environment"],
-  "transports": ["local", "cloud"],
+  "cover_image": "https://raw.githubusercontent.com/guim31/gladys-habitica/main/cover.png",
+  "categories": ["services"],
+  "transports": ["cloud", "local"],
   "config_schema": [
     {
       "key": "intro",
       "type": "section",
-      "label": { "en": "Getting started", "fr": "Pour commencer" },
+      "label": {
+        "en": "Your Habitica account",
+        "fr": "Votre compte Habitica",
+        "de": "Dein Habitica-Konto",
+        "es": "Su cuenta de Habitica"
+      },
       "description": {
-        "en": "The demo weather station reads real data from the free Open-Meteo API: pick the coordinates to observe. No account, no API key.",
-        "fr": "La station météo de démonstration lit de vraies données via l'API gratuite Open-Meteo : choisissez les coordonnées à observer. Pas de compte, pas de clé d'API."
+        "en": "On habitica.com or your own server. The user id and API token are in Habitica: Settings, Site Data, API.",
+        "fr": "Sur habitica.com ou votre propre serveur. L'identifiant utilisateur et le jeton d'API sont dans Habitica : Paramètres, Données du site, API.",
+        "de": "Auf habitica.com oder deinem eigenen Server. Benutzer-ID und API-Token findest du in Habitica: Einstellungen, Seitendaten, API.",
+        "es": "En habitica.com o en su propio servidor. El ID de usuario y el token de API están en Habitica: Ajustes, Datos del sitio, API."
       },
       "links": [
         {
-          "url": "https://open-meteo.com/en/docs",
-          "label": { "en": "Open-Meteo documentation", "fr": "Documentation Open-Meteo" }
+          "url": "https://habitica.com/user/settings/siteData",
+          "label": {
+            "en": "Habitica API settings",
+            "fr": "Paramètres d'API de Habitica",
+            "de": "Habitica-API-Einstellungen",
+            "es": "Ajustes de API de Habitica"
+          }
         }
       ]
     },
     {
-      "key": "latitude",
-      "type": "number",
-      "label": { "en": "Latitude", "fr": "Latitude" },
-      "description": {
-        "en": "Latitude used for the demo weather sensor.",
-        "fr": "Latitude utilisée par le capteur météo de démonstration."
+      "key": "url",
+      "type": "string",
+      "label": {
+        "en": "Address",
+        "fr": "Adresse",
+        "de": "Adresse",
+        "es": "Dirección"
       },
-      "placeholder": { "en": "e.g. 48.8566", "fr": "ex. 48.8566" },
-      "required": true,
-      "default": 48.8566,
-      "min": -90,
-      "max": 90
-    },
-    {
-      "key": "longitude",
-      "type": "number",
-      "label": { "en": "Longitude", "fr": "Longitude" },
       "description": {
-        "en": "Longitude used for the demo weather sensor.",
-        "fr": "Longitude utilisée par le capteur météo de démonstration."
+        "en": "Keep https://habitica.com, or the address of your self-hosted Habitica.",
+        "fr": "Gardez https://habitica.com, ou l'adresse de votre Habitica auto-hébergé.",
+        "de": "Behalte https://habitica.com oder gib die Adresse deines selbst gehosteten Habitica ein.",
+        "es": "Mantenga https://habitica.com, o la dirección de su Habitica autoalojado."
       },
-      "placeholder": { "en": "e.g. 2.3522", "fr": "ex. 2.3522" },
-      "required": true,
-      "default": 2.3522,
-      "min": -180,
-      "max": 180
-    },
-    {
-      "key": "unit",
-      "type": "select",
-      "label": { "en": "Temperature unit", "fr": "Unité de température" },
+      "placeholder": {
+        "en": "e.g. https://habitica.com",
+        "fr": "ex. https://habitica.com",
+        "de": "z. B. https://habitica.com",
+        "es": "p. ej. https://habitica.com"
+      },
       "required": false,
-      "default": "celsius",
+      "default": "https://habitica.com"
+    },
+    {
+      "key": "user_id",
+      "type": "string",
+      "label": {
+        "en": "User ID",
+        "fr": "Identifiant utilisateur",
+        "de": "Benutzer-ID",
+        "es": "ID de usuario"
+      },
+      "description": {
+        "en": "Settings, Site Data, API: User ID.",
+        "fr": "Paramètres, Données du site, API : ID utilisateur.",
+        "de": "Einstellungen, Seitendaten, API: Benutzer-ID.",
+        "es": "Ajustes, Datos del sitio, API: ID de usuario."
+      },
+      "placeholder": {
+        "en": "e.g. 01234567-89ab-cdef-0123-456789abcdef",
+        "fr": "ex. 01234567-89ab-cdef-0123-456789abcdef",
+        "de": "z. B. 01234567-89ab-cdef-0123-456789abcdef",
+        "es": "p. ej. 01234567-89ab-cdef-0123-456789abcdef"
+      },
+      "required": true,
+      "default": ""
+    },
+    {
+      "key": "api_token",
+      "type": "secret",
+      "label": {
+        "en": "API token",
+        "fr": "Jeton d'API",
+        "de": "API-Token",
+        "es": "Token de API"
+      },
+      "description": {
+        "en": "Settings, Site Data, API: API Token (Show API Token). It gives full access to the account.",
+        "fr": "Paramètres, Données du site, API : Jeton d'API (Afficher le jeton d'API). Il donne un accès complet au compte.",
+        "de": "Einstellungen, Seitendaten, API: API-Token (API-Token anzeigen). Es gibt vollen Zugriff auf das Konto.",
+        "es": "Ajustes, Datos del sitio, API: Token de API (Mostrar token de API). Da acceso completo a la cuenta."
+      },
+      "required": true
+    },
+    {
+      "key": "allow_self_signed",
+      "type": "boolean",
+      "label": {
+        "en": "Accept self-signed certificates",
+        "fr": "Accepter les certificats auto-signés",
+        "de": "Selbstsignierte Zertifikate akzeptieren",
+        "es": "Aceptar certificados autofirmados"
+      },
+      "description": {
+        "en": "For an https:// address whose certificate is self-signed. Tick only for your own server.",
+        "fr": "Pour une adresse en https:// dont le certificat est auto-signé. À cocher pour votre propre serveur seulement.",
+        "de": "Für eine https://-Adresse mit selbstsigniertem Zertifikat. Nur für deinen eigenen Server aktivieren.",
+        "es": "Para una dirección https:// con certificado autofirmado. Márquelo solo para su propio servidor."
+      },
+      "required": false,
+      "default": false
+    },
+    {
+      "key": "options",
+      "type": "section",
+      "label": {
+        "en": "Options",
+        "fr": "Options",
+        "de": "Optionen",
+        "es": "Opciones"
+      }
+    },
+    {
+      "key": "health_threshold",
+      "type": "number",
+      "label": {
+        "en": "Low health threshold",
+        "fr": "Seuil de points de vie bas",
+        "de": "Schwelle für niedrige Lebenspunkte",
+        "es": "Umbral de salud baja"
+      },
+      "description": {
+        "en": "The \"Habitica health low\" event fires when health falls below this value (out of 50).",
+        "fr": "L'événement « Points de vie Habitica bas » se déclenche quand les points de vie passent sous cette valeur (sur 50).",
+        "de": "Das Ereignis „Habitica-Lebenspunkte niedrig“ wird ausgelöst, wenn die Lebenspunkte unter diesen Wert fallen (von 50).",
+        "es": "El evento «Salud de Habitica baja» se activa cuando la salud baja de este valor (sobre 50)."
+      },
+      "required": false,
+      "default": 15,
+      "min": 1,
+      "max": 50
+    },
+    {
+      "key": "reminder_hours",
+      "type": "select",
+      "label": {
+        "en": "Reminder of the dailies left",
+        "fr": "Rappel des quotidiennes restantes",
+        "de": "Erinnerung an offene Tägliche",
+        "es": "Recordatorio de diarias pendientes"
+      },
+      "description": {
+        "en": "When the \"Habitica daily still to do\" event fires, before the end of the Habitica day (Custom Day Start).",
+        "fr": "Moment de l'événement « Quotidienne Habitica encore à faire », avant la fin de la journée Habitica (début de journée personnalisé).",
+        "de": "Wann das Ereignis „Habitica-Tägliche noch offen“ ausgelöst wird, vor dem Ende des Habitica-Tages (eigener Tagesbeginn).",
+        "es": "Cuándo se activa el evento «Diaria de Habitica aún pendiente», antes del final del día de Habitica (inicio de día personalizado)."
+      },
+      "required": false,
+      "default": "2",
       "options": [
-        { "value": "celsius", "label": { "en": "Celsius", "fr": "Celsius" } },
-        { "value": "fahrenheit", "label": { "en": "Fahrenheit", "fr": "Fahrenheit" } }
+        {
+          "value": "1",
+          "label": {
+            "en": "1 hour before",
+            "fr": "1 heure avant",
+            "de": "1 Stunde vorher",
+            "es": "1 hora antes"
+          }
+        },
+        {
+          "value": "2",
+          "label": {
+            "en": "2 hours before",
+            "fr": "2 heures avant",
+            "de": "2 Stunden vorher",
+            "es": "2 horas antes"
+          }
+        },
+        {
+          "value": "3",
+          "label": {
+            "en": "3 hours before",
+            "fr": "3 heures avant",
+            "de": "3 Stunden vorher",
+            "es": "3 horas antes"
+          }
+        },
+        {
+          "value": "4",
+          "label": {
+            "en": "4 hours before",
+            "fr": "4 heures avant",
+            "de": "4 Stunden vorher",
+            "es": "4 horas antes"
+          }
+        },
+        {
+          "value": "6",
+          "label": {
+            "en": "6 hours before",
+            "fr": "6 heures avant",
+            "de": "6 Stunden vorher",
+            "es": "6 horas antes"
+          }
+        },
+        {
+          "value": "8",
+          "label": {
+            "en": "8 hours before",
+            "fr": "8 heures avant",
+            "de": "8 Stunden vorher",
+            "es": "8 horas antes"
+          }
+        }
       ]
     },
     {
-      "key": "poll_frequency",
-      "type": "number",
-      "label": { "en": "Refresh interval (s)", "fr": "Intervalle de rafraîchissement (s)" },
+      "key": "poll_interval",
+      "type": "select",
+      "label": {
+        "en": "Refresh interval",
+        "fr": "Intervalle de rafraîchissement",
+        "de": "Aktualisierungsintervall",
+        "es": "Intervalo de actualización"
+      },
       "description": {
-        "en": "How often sensors are polled, in seconds (one minute minimum).",
-        "fr": "Fréquence d'interrogation des capteurs, en secondes (une minute minimum)."
+        "en": "How often Habitica is read. The reminder and the start of the day are always followed on time.",
+        "fr": "Fréquence de lecture de Habitica. Le rappel et le début de journée sont toujours suivis à l'heure.",
+        "de": "Wie oft Habitica gelesen wird. Erinnerung und Tagesbeginn werden immer pünktlich berücksichtigt.",
+        "es": "Con qué frecuencia se lee Habitica. El recordatorio y el inicio del día se siguen siempre a tiempo."
       },
       "required": false,
-      "default": 300,
-      "min": 60,
-      "max": 3600
+      "default": "300",
+      "options": [
+        {
+          "value": "300",
+          "label": {
+            "en": "5 minutes",
+            "fr": "5 minutes",
+            "de": "5 Minuten",
+            "es": "5 minutos"
+          }
+        },
+        {
+          "value": "600",
+          "label": {
+            "en": "10 minutes",
+            "fr": "10 minutes",
+            "de": "10 Minuten",
+            "es": "10 minutos"
+          }
+        },
+        {
+          "value": "900",
+          "label": {
+            "en": "15 minutes",
+            "fr": "15 minutes",
+            "de": "15 Minuten",
+            "es": "15 minutos"
+          }
+        },
+        {
+          "value": "1800",
+          "label": {
+            "en": "30 minutes",
+            "fr": "30 minutes",
+            "de": "30 Minuten",
+            "es": "30 minutos"
+          }
+        }
+      ]
+    },
+    {
+      "key": "language",
+      "type": "select",
+      "label": {
+        "en": "Language of the feature names",
+        "fr": "Langue des noms de fonctionnalités",
+        "de": "Sprache der Funktionsnamen",
+        "es": "Idioma de los nombres de funciones"
+      },
+      "description": {
+        "en": "Names given to the features when the device is added, and texts sent to scenes.",
+        "fr": "Noms donnés aux fonctionnalités à l'ajout de l'appareil, et textes envoyés aux scènes.",
+        "de": "Namen der Funktionen beim Hinzufügen des Geräts und an Szenen gesendete Texte.",
+        "es": "Nombres de las funciones al añadir el dispositivo y textos enviados a las escenas."
+      },
+      "required": false,
+      "default": "fr",
+      "options": [
+        {
+          "value": "en",
+          "label": {
+            "en": "English",
+            "fr": "Anglais",
+            "de": "Englisch",
+            "es": "Inglés"
+          }
+        },
+        {
+          "value": "fr",
+          "label": {
+            "en": "French",
+            "fr": "Français",
+            "de": "Französisch",
+            "es": "Francés"
+          }
+        },
+        {
+          "value": "de",
+          "label": {
+            "en": "German",
+            "fr": "Allemand",
+            "de": "Deutsch",
+            "es": "Alemán"
+          }
+        },
+        {
+          "value": "es",
+          "label": {
+            "en": "Spanish",
+            "fr": "Espagnol",
+            "de": "Spanisch",
+            "es": "Español"
+          }
+        }
+      ]
     }
   ],
   "actions": [
     {
-      "key": "test_weather",
-      "label": { "en": "Test the weather provider", "fr": "Tester le fournisseur météo" },
+      "key": "test_connection",
+      "label": {
+        "en": "Test the connection",
+        "fr": "Tester la connexion",
+        "de": "Verbindung testen",
+        "es": "Probar la conexión"
+      },
+      "description": {
+        "en": "Reads Habitica now and reports what it finds.",
+        "fr": "Lit Habitica maintenant et indique ce qu'il trouve.",
+        "de": "Liest Habitica sofort und meldet, was es findet.",
+        "es": "Lee Habitica ahora e indica lo que encuentra."
+      },
       "timeout_seconds": 30
-    },
-    {
-      "key": "identify",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "fields": [
-        {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
-        }
-      ]
     }
   ],
   "scene_triggers": [
     {
-      "key": "motion_detected",
-      "label": { "en": "Motion detected", "fr": "Mouvement détecté" },
+      "key": "daily_pending",
+      "label": {
+        "en": "Habitica daily still to do",
+        "fr": "Quotidienne Habitica encore à faire",
+        "de": "Habitica-Tägliche noch offen",
+        "es": "Diaria de Habitica aún pendiente"
+      },
       "description": {
-        "en": "A demo motion sensor saw a person or an animal move.",
-        "fr": "Un détecteur de démonstration a vu bouger une personne ou un animal."
+        "en": "Some hours before the end of the Habitica day (see the configuration), a daily is still unchecked.",
+        "fr": "Quelques heures avant la fin de la journée Habitica (voir la configuration), une quotidienne n'est toujours pas cochée.",
+        "de": "Einige Stunden vor dem Ende des Habitica-Tages (siehe Konfiguration) ist eine Tägliche noch nicht abgehakt.",
+        "es": "Unas horas antes del final del día de Habitica (vea la configuración), una diaria sigue sin marcar."
       },
       "fields": [
         {
-          "key": "device",
-          "type": "select",
-          "source": "devices",
-          "label": { "en": "Sensor", "fr": "Détecteur" }
-        },
-        {
-          "key": "target",
-          "type": "multi_select",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" },
-          "options": [
-            { "value": "person", "label": { "en": "Person", "fr": "Personne" } },
-            { "value": "animal", "label": { "en": "Animal", "fr": "Animal" } }
-          ]
+          "key": "task",
+          "type": "string",
+          "label": {
+            "en": "Daily title (empty: any)",
+            "fr": "Titre de la quotidienne (vide : toutes)",
+            "de": "Titel der Täglichen (leer: beliebig)",
+            "es": "Título de la diaria (vacío: cualquiera)"
+          }
         }
       ],
       "variables": [
         {
-          "key": "target",
+          "key": "task",
           "type": "string",
-          "label": { "en": "What moved", "fr": "Ce qui a bougé" }
+          "label": {
+            "en": "Daily",
+            "fr": "Quotidienne",
+            "de": "Tägliche",
+            "es": "Diaria"
+          }
+        },
+        {
+          "key": "task_id",
+          "type": "string",
+          "label": {
+            "en": "Daily id",
+            "fr": "Identifiant de la quotidienne",
+            "de": "ID der Täglichen",
+            "es": "ID de la diaria"
+          }
+        },
+        {
+          "key": "dailies_left",
+          "type": "number",
+          "label": {
+            "en": "Dailies left",
+            "fr": "Quotidiennes restantes",
+            "de": "Offene Tägliche",
+            "es": "Diarias pendientes"
+          }
+        },
+        {
+          "key": "hours_left",
+          "type": "number",
+          "label": {
+            "en": "Hours before the end of the day",
+            "fr": "Heures avant la fin de journée",
+            "de": "Stunden bis zum Tagesende",
+            "es": "Horas antes del final del día"
+          }
+        }
+      ]
+    },
+    {
+      "key": "level_up",
+      "label": {
+        "en": "Habitica level gained",
+        "fr": "Niveau Habitica gagné",
+        "de": "Habitica-Stufe aufgestiegen",
+        "es": "Nivel de Habitica ganado"
+      },
+      "description": {
+        "en": "The character reached a new level.",
+        "fr": "Le personnage a atteint un nouveau niveau.",
+        "de": "Der Charakter hat eine neue Stufe erreicht.",
+        "es": "El personaje ha alcanzado un nuevo nivel."
+      },
+      "variables": [
+        {
+          "key": "level",
+          "type": "number",
+          "label": {
+            "en": "Level",
+            "fr": "Niveau",
+            "de": "Stufe",
+            "es": "Nivel"
+          }
+        },
+        {
+          "key": "previous_level",
+          "type": "number",
+          "label": {
+            "en": "Previous level",
+            "fr": "Niveau précédent",
+            "de": "Vorherige Stufe",
+            "es": "Nivel anterior"
+          }
+        },
+        {
+          "key": "class",
+          "type": "string",
+          "label": {
+            "en": "Class",
+            "fr": "Classe",
+            "de": "Klasse",
+            "es": "Clase"
+          }
+        }
+      ]
+    },
+    {
+      "key": "health_low",
+      "label": {
+        "en": "Habitica health low",
+        "fr": "Points de vie Habitica bas",
+        "de": "Habitica-Lebenspunkte niedrig",
+        "es": "Salud de Habitica baja"
+      },
+      "description": {
+        "en": "Health fell below the threshold set in the configuration.",
+        "fr": "Les points de vie sont passés sous le seuil réglé dans la configuration.",
+        "de": "Die Lebenspunkte sind unter die in der Konfiguration eingestellte Schwelle gefallen.",
+        "es": "La salud ha bajado del umbral fijado en la configuración."
+      },
+      "variables": [
+        {
+          "key": "health",
+          "type": "number",
+          "label": {
+            "en": "Health (out of 50)",
+            "fr": "Points de vie (sur 50)",
+            "de": "Lebenspunkte (von 50)",
+            "es": "Salud (sobre 50)"
+          }
+        },
+        {
+          "key": "threshold",
+          "type": "number",
+          "label": {
+            "en": "Threshold",
+            "fr": "Seuil",
+            "de": "Schwelle",
+            "es": "Umbral"
+          }
+        },
+        {
+          "key": "level",
+          "type": "number",
+          "label": {
+            "en": "Level",
+            "fr": "Niveau",
+            "de": "Stufe",
+            "es": "Nivel"
+          }
+        }
+      ]
+    },
+    {
+      "key": "all_dailies_done",
+      "label": {
+        "en": "All Habitica dailies done",
+        "fr": "Toutes les quotidiennes Habitica faites",
+        "de": "Alle Habitica-Täglichen erledigt",
+        "es": "Todas las diarias de Habitica hechas"
+      },
+      "description": {
+        "en": "The last daily of the day was just checked.",
+        "fr": "La dernière quotidienne du jour vient d'être cochée.",
+        "de": "Die letzte Tägliche des Tages wurde gerade abgehakt.",
+        "es": "Se acaba de marcar la última diaria del día."
+      },
+      "variables": [
+        {
+          "key": "dailies",
+          "type": "number",
+          "label": {
+            "en": "Dailies of the day",
+            "fr": "Quotidiennes du jour",
+            "de": "Tägliche des Tages",
+            "es": "Diarias del día"
+          }
         }
       ]
     }
   ],
   "scene_actions": [
     {
-      "key": "identify_device",
-      "label": { "en": "Identify a device", "fr": "Identifier un appareil" },
-      "description": {
-        "en": "Make a device signal itself (the demo light blinks).",
-        "fr": "Fait se signaler un appareil (la lampe de démonstration clignote)."
+      "key": "score_task",
+      "label": {
+        "en": "Check a Habitica task",
+        "fr": "Cocher une tâche Habitica",
+        "de": "Habitica-Aufgabe abhaken",
+        "es": "Marcar una tarea de Habitica"
       },
-      "timeout_seconds": 15,
+      "description": {
+        "en": "A habit + or −, a daily or a to-do, by its title. Starts the new day first if needed.",
+        "fr": "Une habitude + ou −, une quotidienne ou une tâche à faire, par son titre. Commence d'abord la journée si besoin.",
+        "de": "Eine Gewohnheit + oder −, eine Tägliche oder ein To-do, per Titel. Beginnt bei Bedarf zuerst den neuen Tag.",
+        "es": "Un hábito + o −, una diaria o un pendiente, por su título. Empieza antes el nuevo día si hace falta."
+      },
+      "timeout_seconds": 30,
       "fields": [
         {
-          "key": "device",
+          "key": "task",
+          "type": "string",
+          "required": true,
+          "label": {
+            "en": "Task title",
+            "fr": "Titre de la tâche",
+            "de": "Titel der Aufgabe",
+            "es": "Título de la tarea"
+          },
+          "description": {
+            "en": "The exact title (case and accents ignored), or the task id.",
+            "fr": "Le titre exact (majuscules et accents ignorés), ou l'identifiant de la tâche.",
+            "de": "Der genaue Titel (Groß- und Kleinschreibung und Akzente egal) oder die ID der Aufgabe.",
+            "es": "El título exacto (sin distinguir mayúsculas ni acentos), o el ID de la tarea."
+          }
+        },
+        {
+          "key": "direction",
           "type": "select",
-          "source": "devices",
-          "label": { "en": "Device", "fr": "Appareil" },
-          "required": true
+          "label": {
+            "en": "Direction (empty: +)",
+            "fr": "Sens (vide : +)",
+            "de": "Richtung (leer: +)",
+            "es": "Sentido (vacío: +)"
+          },
+          "description": {
+            "en": "− scores a bad habit, or unchecks a checked daily.",
+            "fr": "− compte une mauvaise habitude, ou décoche une quotidienne cochée.",
+            "de": "− zählt eine schlechte Gewohnheit oder setzt eine abgehakte Tägliche zurück.",
+            "es": "− cuenta un mal hábito, o desmarca una diaria marcada."
+          },
+          "options": [
+            {
+              "value": "up",
+              "label": {
+                "en": "+ (check)",
+                "fr": "+ (cocher)",
+                "de": "+ (abhaken)",
+                "es": "+ (marcar)"
+              }
+            },
+            {
+              "value": "down",
+              "label": {
+                "en": "− (minus, uncheck a daily)",
+                "fr": "− (moins, décocher une quotidienne)",
+                "de": "− (minus, Tägliche zurücksetzen)",
+                "es": "− (menos, desmarcar una diaria)"
+              }
+            }
+          ]
         }
       ],
       "outputs": [
         {
-          "key": "signalled",
-          "type": "boolean",
-          "label": { "en": "Device signalled", "fr": "Appareil signalé" }
+          "key": "task",
+          "type": "string",
+          "label": {
+            "en": "Task",
+            "fr": "Tâche",
+            "de": "Aufgabe",
+            "es": "Tarea"
+          }
+        },
+        {
+          "key": "task_type",
+          "type": "string",
+          "label": {
+            "en": "Type (habit, daily, todo)",
+            "fr": "Type (habit, daily, todo)",
+            "de": "Typ (habit, daily, todo)",
+            "es": "Tipo (habit, daily, todo)"
+          }
+        },
+        {
+          "key": "health",
+          "type": "number",
+          "label": {
+            "en": "Health",
+            "fr": "Points de vie",
+            "de": "Lebenspunkte",
+            "es": "Salud"
+          }
+        },
+        {
+          "key": "level",
+          "type": "number",
+          "label": {
+            "en": "Level",
+            "fr": "Niveau",
+            "de": "Stufe",
+            "es": "Nivel"
+          }
+        },
+        {
+          "key": "gold",
+          "type": "number",
+          "label": {
+            "en": "Gold",
+            "fr": "Or",
+            "de": "Gold",
+            "es": "Oro"
+          }
+        }
+      ]
+    },
+    {
+      "key": "create_todo",
+      "label": {
+        "en": "Create a Habitica to-do",
+        "fr": "Créer une tâche à faire Habitica",
+        "de": "Habitica-To-do erstellen",
+        "es": "Crear un pendiente de Habitica"
+      },
+      "description": {
+        "en": "Adds a to-do to the account.",
+        "fr": "Ajoute une tâche à faire au compte.",
+        "de": "Fügt dem Konto ein To-do hinzu.",
+        "es": "Añade un pendiente a la cuenta."
+      },
+      "timeout_seconds": 20,
+      "fields": [
+        {
+          "key": "title",
+          "type": "string",
+          "required": true,
+          "label": {
+            "en": "Title",
+            "fr": "Titre",
+            "de": "Titel",
+            "es": "Título"
+          }
+        }
+      ],
+      "outputs": [
+        {
+          "key": "task",
+          "type": "string",
+          "label": {
+            "en": "Task",
+            "fr": "Tâche",
+            "de": "Aufgabe",
+            "es": "Tarea"
+          }
+        },
+        {
+          "key": "task_id",
+          "type": "string",
+          "label": {
+            "en": "Task id",
+            "fr": "Identifiant de la tâche",
+            "de": "ID der Aufgabe",
+            "es": "ID de la tarea"
+          }
+        }
+      ]
+    },
+    {
+      "key": "start_day",
+      "label": {
+        "en": "Start the Habitica day",
+        "fr": "Commencer la journée Habitica",
+        "de": "Habitica-Tag beginnen",
+        "es": "Empezar el día de Habitica"
+      },
+      "description": {
+        "en": "Runs the end of yesterday as opening Habitica does: dailies reset, damage of the missed ones.",
+        "fr": "Clôt la veille comme à l'ouverture de Habitica : quotidiennes remises à zéro, dégâts des manquées.",
+        "de": "Schließt den Vortag ab wie beim Öffnen von Habitica: Tägliche zurückgesetzt, Schaden der verpassten.",
+        "es": "Cierra el día anterior como al abrir Habitica: diarias reiniciadas, daño de las no hechas."
+      },
+      "timeout_seconds": 20
+    },
+    {
+      "key": "read_status",
+      "label": {
+        "en": "Read Habitica",
+        "fr": "Lire Habitica",
+        "de": "Habitica lesen",
+        "es": "Leer Habitica"
+      },
+      "description": {
+        "en": "Dailies left, overdue to-dos and health as a sentence, for a message or a voice announcement.",
+        "fr": "Quotidiennes restantes, tâches en retard et points de vie en une phrase, pour un message ou une annonce vocale.",
+        "de": "Offene Tägliche, überfällige To-dos und Lebenspunkte als Satz, für eine Nachricht oder eine Sprachansage.",
+        "es": "Diarias pendientes, pendientes atrasados y salud en una frase, para un mensaje o un anuncio de voz."
+      },
+      "timeout_seconds": 20,
+      "outputs": [
+        {
+          "key": "text",
+          "type": "string",
+          "label": {
+            "en": "Sentence",
+            "fr": "Phrase",
+            "de": "Satz",
+            "es": "Frase"
+          }
+        },
+        {
+          "key": "dailies_left",
+          "type": "number",
+          "label": {
+            "en": "Dailies left",
+            "fr": "Quotidiennes restantes",
+            "de": "Offene Tägliche",
+            "es": "Diarias pendientes"
+          }
+        },
+        {
+          "key": "todos_overdue",
+          "type": "number",
+          "label": {
+            "en": "Overdue to-dos",
+            "fr": "À faire en retard",
+            "de": "Überfällige To-dos",
+            "es": "Pendientes atrasados"
+          }
+        },
+        {
+          "key": "health",
+          "type": "number",
+          "label": {
+            "en": "Health",
+            "fr": "Points de vie",
+            "de": "Lebenspunkte",
+            "es": "Salud"
+          }
+        },
+        {
+          "key": "level",
+          "type": "number",
+          "label": {
+            "en": "Level",
+            "fr": "Niveau",
+            "de": "Stufe",
+            "es": "Nivel"
+          }
         }
       ]
     }
   ],
   "widgets": [
     {
-      "key": "demo_status",
-      "label": { "en": "Demo status", "fr": "État de la démo" },
-      "description": {
-        "en": "Live temperature and plug power, plug connection and observed location.",
-        "fr": "Température et puissance en direct, connexion de la prise, position observée."
+      "key": "dailies_today",
+      "label": {
+        "en": "Habitica dailies",
+        "fr": "Quotidiennes Habitica",
+        "de": "Habitica-Tägliche",
+        "es": "Diarias de Habitica"
       },
-      "icon": "activity",
-      "action_timeout_seconds": 15
+      "description": {
+        "en": "Dailies left today and overdue to-dos, with a button to check each daily.",
+        "fr": "Les quotidiennes restantes et les tâches en retard, avec un bouton pour cocher chaque quotidienne.",
+        "de": "Heute offene Tägliche und überfällige To-dos, mit einer Taste zum Abhaken jeder Täglichen.",
+        "es": "Diarias pendientes de hoy y pendientes atrasados, con un botón para marcar cada diaria."
+      },
+      "icon": "check-square",
+      "action_timeout_seconds": 20
     }
   ]
 }
